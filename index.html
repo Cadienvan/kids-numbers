@@ -117,7 +117,7 @@
       function checkAnswer(chosen, correctNum) {
         if (chosen === correctNum) {
           speakStr("Bravo, hai vinto!");
-          feedbackImage.src = "https://cataas.com/cat";
+          feedbackImage.src = "https://cataas.com/cat?timestamp=" + Date.now();
           feedbackImage.style.display = "block";
           setTimeout(newRound, 2000);
         } else {
