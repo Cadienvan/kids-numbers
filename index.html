@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gioco per bambini</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background: #f0f0f0;
+      }
+      .number-display {
+        font-size: 5rem;
+        margin-bottom: 2rem;
+      }
+      .options {
+        display: flex;
+        gap: 1rem;
+      }
+      .option {
+        background: #fff;
+        border: 2px solid #ccc;
+        padding: 2rem 4rem;
+        font-size: 6rem;
+        cursor: pointer;
+        border-radius: 8px;
+      }
+      .option:hover {
+        background: #e0e0e0;
+      }
+      .feedback-img {
+        width: 400px;
+        height: auto;
+        display: block;
+        margin: 1rem auto;
+      }
+      .start-container {
+        text-align: center;
+      }
+      .start-button {
+        font-size: 2rem;
+        padding: 1rem 2rem;
+        background: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .start-button:hover {
+        background: #45a049;
+      }
+      .game-container {
+        display: none;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="start-container" id="startContainer">
+      <button class="start-button" onclick="startGame()">Inizia il gioco</button>
+    </div>
+    <div class="game-container" id="gameContainer">
+      <div class="number-display" id="displayNumber"></div>
+      <img id="feedbackImage" class="feedback-img" style="display: none" />
+      <div class="options" id="options"></div>
+    </div>
+
+    <script>
+      const audioResult = true;
+      const feedbackImage = document.getElementById("feedbackImage");
+      const displayNumber = document.getElementById("displayNumber");
+      const optionsDiv = document.getElementById("options");
+      const startContainer = document.getElementById("startContainer");
+      const gameContainer = document.getElementById("gameContainer");
+
+      function startGame() {
+        startContainer.style.display = "none";
+        gameContainer.style.display = "block";
+        newRound();
+      }
+
+      function newRound() {
+        feedbackImage.style.display = "none";
+        const correctNum = Math.floor(Math.random() * 9) + 1;
+
+        // Genera possibili risposte, inclusa quella corretta
+        let options = [correctNum];
+        while (options.length < 3) {
+          let randomNum = Math.floor(Math.random() * 9) + 1;
+          if (!options.includes(randomNum)) {
+            options.push(randomNum);
+          }
+        }
+        options.sort(() => Math.random() - 0.5);
+
+        // Mostra le opzioni
+        optionsDiv.innerHTML = "";
+        options.forEach(num => {
+          const btn = document.createElement("div");
+          btn.classList.add("option");
+          btn.textContent = num;
+          btn.onclick = () => checkAnswer(num, correctNum);
+          optionsDiv.appendChild(btn);
+        });
+
+        // Output audio del numero corretto
+        if (audioResult) {
+          speakStr(`Trova il numero ${correctNum}`);
+        }
+      }
+
+      function checkAnswer(chosen, correctNum) {
+        if (chosen === correctNum) {
+          speakStr("Bravo, hai vinto!");
+          feedbackImage.src = "https://cataas.com/cat";
+          feedbackImage.style.display = "block";
+          setTimeout(newRound, 2000);
+        } else {
+          speakStr(`No, hai scelto il numero ${chosen}. Devi trovare il ${correctNum}`);
+        }
+      }
+
+      function speakStr(text) {
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.rate = 0.6;
+        window.speechSynthesis.speak(msg);
+      }
+    </script>
+  </body>
+</html>
